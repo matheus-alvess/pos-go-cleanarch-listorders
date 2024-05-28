@@ -1,0 +1,10 @@
+### List Orders
+GET http://localhost:8080/order
+
+### List Orders (GraphQL)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+
+{
+  "query": "{ listOrders { id price tax } }"
+}
