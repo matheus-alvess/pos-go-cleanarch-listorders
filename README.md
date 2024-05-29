@@ -84,7 +84,7 @@ mutation {
 
 ## Testando com o api.http
 
-Abra o arquivo `/app/http/api.http` em um editor que suporte e execute as requests.
+Abra o arquivo `api/http/api.http` em um editor que suporte e execute as requests.
 
 ## Testando o Serviço gRPC
 Para testar o serviço gRPC, use o grpcurl:
