@@ -1,6 +1,8 @@
 syntax = "proto3";
 
-package orderapp;
+package pb;
+
+option go_package = "pos-go-cleanarch-listorders/grpc/pb";
 
 service OrderService {
   rpc ListOrders (Empty) returns (OrderListResponse);

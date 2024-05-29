@@ -2,16 +2,18 @@ package main
 
 import (
 	"encoding/json"
+	grpcLib "google.golang.org/grpc"
 	"log"
 	"net"
 	"net/http"
-	pb "order-app/grpc"
+	"pos-go-cleanarch-listorders/graphql"
+	"pos-go-cleanarch-listorders/grpc/pb"
+	"pos-go-cleanarch-listorders/grpc/service"
 	"pos-go-cleanarch-listorders/internal/repository"
 
 	"github.com/gorilla/mux"
-	"github.com/graph-gophers/graphql-go"
+	graphqlLib "github.com/graph-gophers/graphql-go"
 	"github.com/graph-gophers/graphql-go/relay"
-	"google.golang.org/grpc"
 )
 
 func main() {
@@ -24,8 +26,6 @@ func main() {
 
 	orderRepo := repository.NewOrderRepository(db)
 
-	// Configurar o serviço REST
-	orderService := grpcService.NewOrderServiceServer(orderRepo)
 	r.HandleFunc("/order", func(w http.ResponseWriter, r *http.Request) {
 		orders, err := orderRepo.ListOrders()
 		if err != nil {
@@ -35,19 +35,16 @@ func main() {
 		json.NewEncoder(w).Encode(orders)
 	}).Methods("GET")
 
-	// Configurar servidor GraphQL
-	schema := graphql.MustParseSchema(graphql.Schema, graphql.NewResolver(orderRepo))
+	schema := graphqlLib.MustParseSchema(graphql.Schema, graphql.NewResolver(orderRepo))
 	r.Handle("/graphql", &relay.Handler{Schema: schema})
 
-	// Iniciar o servidor HTTP
 	go func() {
 		log.Println("HTTP server listening on port 8080")
 		log.Fatal(http.ListenAndServe(":8080", r))
 	}()
 
-	// Iniciar o servidor gRPC
-	grpcServer := grpc.NewServer()
-	pb.RegisterOrderServiceServer(grpcServer, orderService)
+	grpcServer := grpcLib.NewServer()
+	pb.RegisterOrderServiceServer(grpcServer, service.NewOrderServiceServer(orderRepo))
 
 	lis, err := net.Listen("tcp", ":50051")
 	if err != nil {

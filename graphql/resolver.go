@@ -31,7 +31,7 @@ func (r *Resolver) ListOrders(ctx context.Context) ([]*Order, error) {
 }
 
 type Order struct {
-	ID    string
-	Price float64
-	Tax   float64
+	ID    int     `json:"id"`
+	Price float64 `json:"price"`
+	Tax   float64 `json:"tax"`
 }
