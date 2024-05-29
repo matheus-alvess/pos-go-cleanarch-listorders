@@ -1,7 +1,9 @@
+// graphql/resolver.go
+
 package graphql
 
 import (
-	"context"
+	"pos-go-cleanarch-listorders/internal/model"
 	"pos-go-cleanarch-listorders/internal/repository"
 )
 
@@ -13,25 +15,18 @@ func NewResolver(orderRepo *repository.OrderRepository) *Resolver {
 	return &Resolver{OrderRepo: orderRepo}
 }
 
-func (r *Resolver) ListOrders(ctx context.Context) ([]*Order, error) {
+// ListOrders retorna a lista de pedidos.
+func (r *Resolver) ListOrders() ([]*model.Order, error) {
+	// Lógica para recuperar a lista de pedidos do repositório
 	orders, err := r.OrderRepo.ListOrders()
 	if err != nil {
 		return nil, err
 	}
 
-	var result []*Order
+	// Convertendo []model.Order para []*model.Order
+	var result []*model.Order
 	for _, order := range orders {
-		result = append(result, &Order{
-			ID:    order.ID,
-			Price: order.Price,
-			Tax:   order.Tax,
-		})
+		result = append(result, &order)
 	}
 	return result, nil
-}
-
-type Order struct {
-	ID    int     `json:"id"`
-	Price float64 `json:"price"`
-	Tax   float64 `json:"tax"`
 }

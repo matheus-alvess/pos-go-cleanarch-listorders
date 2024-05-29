@@ -10,7 +10,7 @@ type Query {
 }
 
 type Order {
-    id: ID!
+    id: Int!
     price: Float!
     tax: Float!
 }

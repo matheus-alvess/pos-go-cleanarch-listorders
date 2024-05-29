@@ -25,7 +25,7 @@ func (r *OrderRepository) ListOrders() ([]model.Order, error) {
 	var orders []model.Order
 	for rows.Next() {
 		var order model.Order
-		if err := rows.Scan(&order.ID, &order.Price, &order.Tax); err != nil {
+		if err := rows.Scan(&order.IDField, &order.PriceField, &order.TaxField); err != nil {
 			return nil, err
 		}
 		orders = append(orders, order)

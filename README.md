@@ -38,7 +38,7 @@ Para testar o serviço gRPC, use o grpcurl:
 2. Execute o comando:
 
 ```bash
-grpcurl -plaintext -d '{}' localhost:50051 order-app.OrderService/ListOrders
+grpcurl -plaintext -d '{}' localhost:50051 pb.OrderService/ListOrders
 ```
 
 ## Notas

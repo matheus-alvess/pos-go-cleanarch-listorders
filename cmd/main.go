@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	grpcLib "google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
 	"net/http"
@@ -27,6 +28,7 @@ func main() {
 	orderRepo := repository.NewOrderRepository(db)
 
 	r.HandleFunc("/order", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
 		orders, err := orderRepo.ListOrders()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -36,15 +38,17 @@ func main() {
 	}).Methods("GET")
 
 	schema := graphqlLib.MustParseSchema(graphql.Schema, graphql.NewResolver(orderRepo))
-	r.Handle("/graphql", &relay.Handler{Schema: schema})
+	r.Handle("/graphql", &relay.Handler{Schema: schema}).Methods("POST")
 
 	go func() {
-		log.Println("HTTP server listening on port 8080")
+		log.Println("HTTP server (REST & GraphQL) listening on port 8080")
 		log.Fatal(http.ListenAndServe(":8080", r))
 	}()
 
 	grpcServer := grpcLib.NewServer()
 	pb.RegisterOrderServiceServer(grpcServer, service.NewOrderServiceServer(orderRepo))
+
+	reflection.Register(grpcServer)
 
 	lis, err := net.Listen("tcp", ":50051")
 	if err != nil {

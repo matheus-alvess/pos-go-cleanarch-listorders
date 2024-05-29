@@ -17,5 +17,8 @@ FROM alpine:latest
 WORKDIR /root/
 COPY --from=builder /app/pos-go-cleanarch-listorders .
 COPY --from=db /docker-entrypoint-initdb.d /docker-entrypoint-initdb.d
+
 EXPOSE 8080
+EXPOSE 50051
+
 CMD ["./pos-go-cleanarch-listorders"]

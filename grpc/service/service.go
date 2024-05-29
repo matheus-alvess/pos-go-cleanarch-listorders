@@ -2,12 +2,10 @@ package service
 
 import (
 	"context"
-	pb2 "pos-go-cleanarch-listorders/grpc/pb"
-	"pos-go-cleanarch-listorders/internal/repository"
-	"strconv"
-
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	pb2 "pos-go-cleanarch-listorders/grpc/pb"
+	"pos-go-cleanarch-listorders/internal/repository"
 )
 
 type CustomOrderServiceServer struct {
@@ -28,9 +26,9 @@ func (s *CustomOrderServiceServer) ListOrders(ctx context.Context, in *pb2.Empty
 	var orderList []*pb2.Order
 	for _, order := range orders {
 		orderList = append(orderList, &pb2.Order{
-			Id:    strconv.Itoa(order.ID),
-			Price: float32(order.Price),
-			Tax:   float32(order.Tax),
+			Id:    string(order.ID()),
+			Price: float32(order.Price()),
+			Tax:   float32(order.Tax()),
 		})
 	}
 
