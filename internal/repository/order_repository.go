@@ -33,6 +33,15 @@ func (r *OrderRepository) ListOrders() ([]model.Order, error) {
 	return orders, nil
 }
 
+func (r *OrderRepository) CreateOrder(price, tax float64) (int, error) {
+	var id int
+	err := r.db.QueryRow("INSERT INTO orders (price, tax) VALUES ($1, $2) RETURNING id", price, tax).Scan(&id)
+	if err != nil {
+		return 0, err
+	}
+	return id, nil
+}
+
 func NewDB() (*sql.DB, error) {
 	dbHost := os.Getenv("DB_HOST")
 	dbUser := os.Getenv("DB_USER")

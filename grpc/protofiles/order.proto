@@ -6,14 +6,20 @@ option go_package = "pos-go-cleanarch-listorders/grpc/pb";
 
 service OrderService {
   rpc ListOrders (Empty) returns (OrderListResponse);
+  rpc CreateOrder (Order) returns (OrderResponse);
 }
 
 message Empty {}
 
 message Order {
-  string id = 1;
+  int32 id = 1;
   float price = 2;
   float tax = 3;
+}
+
+message OrderResponse {
+  int32 id = 1;
+  string message = 2;
 }
 
 message OrderListResponse {
